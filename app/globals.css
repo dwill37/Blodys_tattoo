@@ -1,0 +1,196 @@
+@import "tailwindcss";
+
+/*
+ * Blodys palette. Dark only: the studio identity is ink on black.
+ * Contrast (WCAG): bone on ink 15.9:1, bone-muted on ink 7.4:1,
+ * blood-bright on ink 5.3:1, bone on blood 6.4:1.
+ */
+:root {
+  --ink: #0c0b0b;
+  --ink-2: #141212;
+  --ink-3: #1c1919;
+  --line: #2b2626;
+  --bone: #ede6da;
+  --bone-muted: #a69e93;
+  --blood: #b0142f;
+  --blood-deep: #7d0c20;
+  --blood-bright: #e8475f;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-bone: var(--bone);
+  --color-bone-muted: var(--bone-muted);
+  --color-blood: var(--blood);
+  --color-blood-deep: var(--blood-deep);
+  --color-blood-bright: var(--blood-bright);
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-anton), "Impact", "Arial Narrow", sans-serif;
+}
+
+/* z-index scale: content 0 · floating button 30 · nav 40 · menu 50 · lightbox 60 · grain 70 */
+
+html {
+  background: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 80px; /* focused/anchored content never hides under the fixed nav */
+}
+
+a,
+button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgb(176 20 47 / 0.25);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--blood);
+  color: var(--bone);
+}
+
+section[id] {
+  scroll-margin-top: 72px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--blood-bright);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@layer components {
+/* Display type: condensed poster face, tight like a stencil sheet. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.88;
+  letter-spacing: -0.005em;
+  text-wrap: balance;
+}
+
+/* Fixed film grain, never on a scrolling container. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- Ink buttons: crimson pours in from the top on hover ---------- */
+.ink-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 48px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition: color 0.45s cubic-bezier(0.65, 0, 0.35, 1), transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ink-btn:active {
+  transform: scale(0.97);
+}
+.ink-btn .ink-fill {
+  position: absolute;
+  inset: -2px;
+  z-index: -1;
+  background: var(--blood);
+  /* same point count as the hover state so the edge drips as it falls */
+  clip-path: polygon(0% 0%, 100% 0%, 100% -10%, 82% -10%, 74% -10%, 62% -10%, 50% -10%, 38% -10%, 26% -10%, 14% -10%, 0% -10%);
+  transition: clip-path 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+@media (hover: hover) {
+  .ink-btn:hover .ink-fill,
+  .ink-btn:focus-visible .ink-fill {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 120%, 82% 135%, 74% 118%, 62% 140%, 50% 120%, 38% 132%, 26% 116%, 14% 138%, 0% 120%);
+  }
+}
+.ink-btn--solid {
+  background: var(--bone);
+  color: var(--ink);
+}
+@media (hover: hover) {
+  .ink-btn--solid:hover,
+  .ink-btn--solid:focus-visible {
+    color: var(--bone);
+  }
+}
+.ink-btn--ghost {
+  background: rgb(12 11 11 / 0.35);
+  color: var(--bone);
+  box-shadow: inset 0 0 0 1px rgb(237 230 218 / 0.35);
+}
+.ink-btn--blood {
+  background: var(--blood);
+  color: var(--bone);
+}
+.ink-btn--blood .ink-fill {
+  background: var(--blood-deep);
+}
+
+.ink-btn .ink-btn__icon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: rgb(12 11 11 / 0.08);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s;
+}
+.ink-btn--ghost .ink-btn__icon,
+.ink-btn--blood .ink-btn__icon {
+  background: rgb(237 230 218 / 0.12);
+}
+@media (hover: hover) {
+  .ink-btn:hover .ink-btn__icon {
+    transform: translate(2px, -1px) scale(1.06);
+    background: rgb(237 230 218 / 0.16);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ink-btn,
+  .ink-btn .ink-fill,
+  .ink-btn .ink-btn__icon {
+    transition: none;
+  }
+}
+
+/* Gallery: quick focus zoom on desktop only */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .zoom-img {
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.7s;
+  }
+  .group:hover .zoom-img,
+  .group:focus-visible .zoom-img {
+    transform: scale(1.06);
+  }
+}
+}
